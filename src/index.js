@@ -11,7 +11,7 @@ import { ChakraProvider,extendTheme } from "@chakra-ui/react";
   styles:{
     global:{
       body:{
-        bg:'#000000'
+        bg:'white'
       }
     }
   }

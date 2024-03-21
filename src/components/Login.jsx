@@ -1,80 +1,128 @@
-import { Img, Box, Text, Input,Button } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  Input,
+  TagLabel,
+  Label,
+  Button,
+  useToast,
+} from "@chakra-ui/react";
+import { useState } from "react";
+import { postData } from "../utilis/api";
+import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom";
+import { setUser } from "../redux/userslice";
 
 export const LogIn = () => {
-  const navigate=useNavigate()
+    const dispatch=useDispatch()
+    const toast=useToast()
+    const navigate=useNavigate()
+    
+  const [data, setData] = useState({});
+  const handleChange = (e) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+  };
+  
+  const handle = async () => {
+    console.log(data);
+    await postData("/user/login", data)
+      .then((e) => {
+        dispatch(setUser(e));
+        toast({
+          title: "Account created.",
+          position: "top",
+          description: "We've created your account for you.",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+        navigate("/interest");
+      })
+      .catch((e) => {
+        console.log(e, "form e blaock");
+      });
+  };
+
   return (
     <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      height="100vh"
-      w={'350px'}
-      
+      w={"35%"}
+      borderRadius={20}
+      borderColor={"#C1C1C1"}
+      borderWidth={1}
+      m={"auto"}
+      mt={"50"}
+      p={3}
+      pb={35}
     >
-      <Box
-        alignItems={"center"}
-        alignContent={"center"}
-        justifyContent={"center"}
+      <Text textAlign={"center"} fontWeight={"600"} fontSize={32} mt={5}>
+        Login
+      </Text>
+      <Text textAlign={"center"} fontWeight={500} fontSize={24}>
+        Welcome back to ECOMMERCE
+      </Text>
+      <Text
         textAlign={"center"}
-        display="flex"
-        flexDirection="column"
-      
+        fontSize={16}
+        opacity={0.8}
+        mb={10}
+        fontWeight={"400"}
       >
-        <Img alignSelf={"center"} src="/a.png"></Img>
-        <Text
-          fontSize="20px"
+        The next gen business marketplace
+      </Text>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        flexDir={"column"}
+      >
+        <Box
+          display={"flex"}
+          justifyContent={"flex-start"}
+          w={"75%"}
+          flexDir={"column"}
           mb={5}
-          mt={5}
-          color="#36A546"
-          fontWeight="normal"
-          lineHeight="21px"
-          letterSpacing="0.02px"
         >
-          We are Electric
-        </Text>
-        <Box mb={30}>
+          <Text>Email</Text>
           <Input
-            borderRadius={25}
-            w={'300px'}
-            placeholder="Email"
-            bg="#1F191966"
-            boxShadow="inset 0px 3px 3px #FFFDFD40, 3px 3px 3px #4A494947"
-            color="white"
-            _placeholder={{ color: "grey" }}
+            display={"block"}
+            name="email"
+            placeholder="Enter"
+            size="sm"
+            onChange={handleChange}
           />
         </Box>
-        <Box>
-          <Input placeholder="Password" borderRadius={30} w={300} 
-          
-          bg="#1F191966"
-          boxShadow="inset 0px 3px 3px #FFFDFD40, 3px 3px 3px #4A494947"
-          color="white"
-          _placeholder={{ color: "grey" }}
-          
+        <Box
+          display={"flex"}
+          justifyContent={"flex-start"}
+          w={"75%"}
+          flexDir={"column"}
+          mb={5}
+        >
+          <Text>Password</Text>
+          <Input
+            display={"block"}
+            name="password"
+            type="password"
+            placeholder="Enter"
+            size="sm"
+            onChange={handleChange}
           />
         </Box>
-     
+
         <Button
-          mt={6} // Add margin top to create space between the input and the button
-          variant="solid"
+          w={"75%"}
+          bg={"black"}
+          borderRadius={0}
           color={"white"}
-          bg="transparent linear-gradient(180deg, #00FF2580 0%, #000001 100%, #36A54680 100%) 0% 0% no-repeat padding-box"
-          fontWeight="bold"
-          fontSize="16px"
-          lineHeight="21px"
-          w={300}
-        borderRadius={25}
-          letterSpacing="0.02px"
-          onClick={()=>navigate('/sec')}
-        >Login
-            </Button>
-
-        <Text color={"#36A546"} mt={5} >
-            Forgot Password
-        </Text>
-
+          onClick={handle}
+        >
+          LOGIN
+        </Button>
       </Box>
+      <Text textAlign={"center"} mt={30} mb={30}>
+        Don’t have an Account?{" "}
+        <span onClick={() => navigate("/new-user")}>SIGN UP</span>
+      </Text>
     </Box>
   );
 };
